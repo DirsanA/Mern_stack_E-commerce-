@@ -1,7 +1,9 @@
 import express from "express";
-
+import dotenv from "dotenv"; //I install dotenv package to acess dot env variables
 const app = express();
 const PORT = 5000;
+
+dotenv.config();
 
 // The 'get' method defines a route for HTTP GET requests.
 // It takes two parameters:

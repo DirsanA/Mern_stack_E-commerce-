@@ -26,6 +26,7 @@ const productSchema = new mongoose.Schema(
 );
 
 // Create a Mongoose model for the Product collection using the schema
-const product = mongoose.model("product", productSchema);
+const Product = mongoose.model("Product", productSchema);
+// model is amethod that takes two arguments the product and schema
 
-export default product;
+export default Product;

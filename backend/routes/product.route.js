@@ -6,16 +6,19 @@ import {
   updateProduct,
   createProduct,
 } from "../controllers/product.controller.js";
+
 const router = express.Router();
 
-// updating the product
-router.put("/", updateProduct);
-// featching all products
+// Fetching all products
 router.get("/", getProduct);
 
-router.delete("/", deleteProduct);
-
-// Define the POST route to create a product
+// Creating a new product
 router.post("/", createProduct);
+
+// Updating a product by ID
+router.put("/:id", updateProduct);
+
+// Deleting a product by ID
+router.delete("/:id", deleteProduct);
 
 export default router;

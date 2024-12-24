@@ -1,9 +1,10 @@
 import Product from "../config/models/product.model.js";
+import mongoose from "mongoose"; // Import mongoose for ObjectId validation
 
 // getting all products
 export const getProduct = async (req, res) => {
   try {
-    const products = await Product.find({}); // empty object means featching all products
+    const products = await Product.find({}); // Fetch all products
     res.status(200).json({
       success: true,
       data: products,
@@ -15,11 +16,12 @@ export const getProduct = async (req, res) => {
     });
   }
 };
+
 export const createProduct = async (req, res) => {
   const product = req.body; // The user will send this data
 
   // Validate if required fields are provided
-  if (!product.name || !product.price || !product.image) {
+  if (!product.name || product.price == null || !product.image) {
     return res.status(400).json({
       success: false,
       message: "Please provide all required fields!",
@@ -44,45 +46,83 @@ export const createProduct = async (req, res) => {
   }
 };
 
-// routte for delete product
-
+// route for delete product
 export const deleteProduct = async (req, res) => {
-  const { id } = req.params; // Destructure to get the product id from the URL params
-  console.log(id); // Log the id to the console
-  // Add your deletion logic here
+  const { id } = req.params;
+
+  // Validate Object ID format
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid Product ID",
+    });
+  }
+
   try {
-    await Product.findByIdAndDelete(id);
+    const deletedProduct = await Product.findByIdAndDelete(id);
+
+    if (!deletedProduct) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found!",
+      });
+    }
+
     res.status(200).json({
       success: true,
       message: "Product is deleted",
     });
   } catch (error) {
-    res.status(404).json({
+    res.status(500).json({
       success: false,
-      message: "product is not found!",
+      message: "Server error",
     });
   }
 };
 
 // route for update product
-
 export const updateProduct = async (req, res) => {
   const { id } = req.params;
+  const product = req.body;
 
-  const product = req.body; // accept the user updated from the body
-  try {
-    const updateProduct = await Product.findByIdAndUpdate(id, product, {
-      new: true,
+  // Validate Object ID format
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid Product ID",
     });
+  }
+
+  // Check if required fields are provided
+  if (!product.name || product.price == null || !product.image) {
+    return res.status(400).json({
+      success: false,
+      message: "Please provide all required fields!",
+    });
+  }
+
+  try {
+    const updatedProduct = await Product.findByIdAndUpdate(id, product, {
+      new: true, // Return the updated product
+    });
+
+    if (!updatedProduct) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found!",
+      });
+    }
+
     res.status(200).json({
       success: true,
-      message: "product is updated succesfuly",
+      message: "Product updated successfully",
+      data: updatedProduct,
     });
   } catch (error) {
-    console.log("error", error);
+    console.error("Update Error:", error);
     res.status(500).json({
       success: false,
-      message: "server error",
+      message: "Server error",
     });
   }
 };

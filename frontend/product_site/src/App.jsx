@@ -1,10 +1,17 @@
-import { Button } from "@chakra-ui/react";
-
+import { Box } from "@chakra-ui/react";
+import HomePage from "./pages/HomePage";
+import CreatePage from "./pages/CreatePage";
+import Navbar from "./componets/Navbar";
+import { Route, Routes } from "react-router-dom";
 const App = () => {
   return (
-    <div>
-      <Button>Hello</Button>
-    </div>
+    <Box minH={"100vh"}>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<HomePage />}></Route>
+        <Route path="/create" element={<CreatePage />}></Route>
+      </Routes>
+    </Box>
   );
 };
 

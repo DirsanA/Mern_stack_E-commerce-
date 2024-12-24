@@ -8,6 +8,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { useProductStore } from "../store/product";
 
 const CreatePage = () => {
   // State for new product
@@ -17,10 +18,12 @@ const CreatePage = () => {
     image: "",
   });
 
+  const { createProduct } = useProductStore();
   // Handle Add Product
-  const handleAddProduct = () => {
-    console.log("Button clicked!");
-    console.log("Product added:", newProduct); // Log the product details
+  const handleAddProduct = async () => {
+    const { success, message } = await createProduct(newProduct); // Fixed spelling error here too
+    console.log("Success:", success); // Fixed spelling error here
+    console.log("Message:", message);
   };
 
   return (

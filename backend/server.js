@@ -24,6 +24,60 @@ connectDB()
     process.exit(1); // Exit the process if DB connection fails
   });
 
+// updating the products
+app.put("/api/products/:id", async (req, res) => {
+  const { id } = req.params;
+
+  const product = req.body; // accept the user updated from the body
+  try {
+    const updateProduct = await Product.findByIdAndUpdate(id, product, {
+      new: true,
+    });
+    res.status(200).json({
+      success: true,
+      message: "product is updated succesfuly",
+    });
+  } catch (error) {
+    console.log("error", error);
+    res.status(500).json({
+      success: false,
+      message: "server error",
+    });
+  }
+});
+// featching all products
+app.get("/api/products", async (req, res) => {
+  try {
+    const products = await Product.find({}); // empty object means featching all products
+    res.status(200).json({
+      success: true,
+      data: products,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+});
+app.delete("/api/products/:id", async (req, res) => {
+  const { id } = req.params; // Destructure to get the product id from the URL params
+  console.log(id); // Log the id to the console
+  // Add your deletion logic here
+  try {
+    await Product.findByIdAndDelete(id);
+    res.status(200).json({
+      success: true,
+      message: "Product is deleted",
+    });
+  } catch (error) {
+    res.status(404).json({
+      success: false,
+      message: "product is not found!",
+    });
+  }
+});
+
 // Define the POST route to create a product
 app.post("/api/products", async (req, res) => {
   const product = req.body; // The user will send this data

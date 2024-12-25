@@ -6,6 +6,7 @@ import {
   Input,
   VStack,
   useColorModeValue,
+  useToast,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useProductStore } from "../store/product";
@@ -18,11 +19,35 @@ const CreatePage = () => {
     image: "",
   });
 
+  const toast = useToast();
   const { createProduct } = useProductStore();
+
   // Handle Add Product
   const handleAddProduct = async () => {
-    const { success, message } = await createProduct(newProduct); // Fixed spelling error here too
-    console.log("Success:", success); // Fixed spelling error here
+    const { success, message } = await createProduct(newProduct);
+
+    // Show success or error toast based on the response
+    if (success) {
+      toast({
+        title: "Product Created",
+        description: message,
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+        position: "top-right",
+      });
+    } else {
+      toast({
+        title: "Error",
+        description: message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "top-right",
+      });
+    }
+
+    console.log("Success:", success);
     console.log("Message:", message);
   };
 

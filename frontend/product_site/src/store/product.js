@@ -48,4 +48,38 @@ export const useProductStore = create((set) => ({
     const data = await res.json();
     set({ products: data.data });
   },
+  // the product deleted account
+  deleteProduct: async (pid) => {
+    console.log("Attempting to delete product with ID:", pid);
+
+    const res = await fetch(`/api/products/${pid}`, {
+      method: "DELETE",
+    });
+
+    const data = await res.json();
+    console.log("Delete API response:", data);
+
+    if (!data.success) {
+      console.log("Failed to delete product:", data.message);
+      return {
+        success: false,
+        message: data.message,
+      };
+    }
+
+    // If deletion is successful, update the state by removing the deleted product
+    set((state) => {
+      const updatedProducts = state.products.filter(
+        (product) => product._id !== pid
+      );
+      console.log("Updated products list:", updatedProducts);
+      return { products: updatedProducts }; // Remove the deleted product from the state
+    });
+
+    console.log("Product deleted successfully!");
+    return {
+      success: true,
+      message: "Product deleted successfully!",
+    };
+  },
 }));

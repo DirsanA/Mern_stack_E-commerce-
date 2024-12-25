@@ -5,14 +5,46 @@ import {
   Heading,
   Text,
   HStack,
-  IconButton,
+  Button,
   useColorModeValue,
+  useToast,
 } from "@chakra-ui/react";
-import { EditIcon, DeleteIcon } from "react";
+import { FiEdit, FiTrash } from "react-icons/fi";
+import { useProductStore } from "../store/product"; // Import the zustand store
 
 const ProductCard = ({ product }) => {
   const textColor = useColorModeValue("gray.600", "gray.200");
   const bg = useColorModeValue("white", "gray.800");
+  const toast = useToast();
+
+  // Fetch the deleteProduct function from zustand store
+  const { deleteProduct } = useProductStore();
+
+  // Handle delete product
+  const handleDelete = async () => {
+    const { success, message } = await deleteProduct(product._id);
+
+    // Show toast notifications based on success or failure
+    if (success) {
+      toast({
+        title: "Product Deleted",
+        description: message,
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+        position: "top-right",
+      });
+    } else {
+      toast({
+        title: "Error",
+        description: message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "top-right",
+      });
+    }
+  };
 
   return (
     <Box
@@ -38,8 +70,16 @@ const ProductCard = ({ product }) => {
           ${product.price}
         </Text>
         <HStack spacing={2}>
-          <IconButton icon={<EditIcon />} colorScheme="blue" />
-          <IconButton icon={<DeleteIcon />} colorScheme="red" />
+          <Button leftIcon={<FiEdit />} colorScheme="blue">
+            Edit
+          </Button>
+          <Button
+            leftIcon={<FiTrash />}
+            colorScheme="red"
+            onClick={handleDelete} // Attach delete handler
+          >
+            Delete
+          </Button>
         </HStack>
       </Box>
     </Box>
